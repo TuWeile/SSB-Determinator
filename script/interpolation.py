@@ -26,6 +26,7 @@ class InterpolatedYields(FixedBondYields):
         self.matrix_B = np.dot(inv_matrix_u, self.matrix_V)
 
     def spline_coefficients(self):
+        # TODO: Finish spline coefficients and their matrices formula!
         pass
 
 
