@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import configparser
 
@@ -13,6 +12,4 @@ class RunImport:
     def import_data(self):
         data_source = pd.read_csv(self.dataset, skiprows=lambda x: x not in [i for i in range(5, 40)],
                                   usecols=[i for i in range(3, 7)], header=None)
-        data_source = data_source.dropna()
-
-        return data_source
+        return data_source.dropna()
