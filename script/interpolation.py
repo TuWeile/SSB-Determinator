@@ -29,16 +29,23 @@ class InterpolatedYields(FixedBondYields):
         self.matrix_B = np.dot(inv_matrix_u, self.matrix_V)
 
     def spline_coefficients(self):
+        b_eer = list(filter(lambda x: x != 0, self.eer))
+
         for i in range(len(self.matrix_n)):
-            self.matrix_n[i][0] = (self.matrix_B[i + 1] - self.matrix_B[i]) / (3 * (1 + (i * 2)))
+            odd_numbers = 1 + (i * 2)
+
+            self.matrix_n[i][0] = (self.matrix_B[i + 1] - self.matrix_B[i]) / (3 * odd_numbers)
             self.matrix_n[i][1] = self.matrix_B[i]
+            self.matrix_n[i][2] = ((b_eer[i + 1] - b_eer[i]) / 100) / odd_numbers - (odd_numbers / 3) * \
+                                  (self.matrix_B[i + 1] + 2 * self.matrix_B[i])
+            self.matrix_n[i][3] = b_eer[i] / 100
 
-
-
-        return self.matrix_n
+    def calc_all_yields(self):
+        pass
 
 
 foo = InterpolatedYields()
 foo.calc_matrices()
-print(foo.spline_coefficients())
+foo.spline_coefficients()
+foo.calc_all_yields()
 
