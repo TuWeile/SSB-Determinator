@@ -1,5 +1,5 @@
-from script import import_datasets
+from interpolation import InterpolatedYields
 
 if __name__ == "__main__":
-    foo = import_datasets.RunImport()
-    print(foo.import_data())
+    foo = InterpolatedYields()
+    print(foo.calc_all_yields())
