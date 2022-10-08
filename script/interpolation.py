@@ -14,21 +14,18 @@ class InterpolatedYields(FixedBondYields):
         self.matrix_V = np.zeros((4, 1))
         self.matrix_n = np.zeros((3, 4))
         self.matrix_B = None
-        self.eer = None
+        self.eer = FixedBondYields.calc_fixed_yields()
 
     def calc_matrices(self):
-        var = FixedBondYields()
-        eer = var.calc_fixed_yields()
-        self.eer = eer
-
-        self.matrix_V[1] = 3 * ((((eer[4] - eer[1]) / 3) - (eer[1] - eer[0])) / 4) / 100
-        self.matrix_V[2] = 3 * ((((eer[9] - eer[4]) / 5) - ((eer[4] - eer[1]) / 3)) / 8) / 100
+        self.matrix_V[1] = 3 * ((((self.eer[4] - self.eer[1]) / 3) - (self.eer[1] - self.eer[0])) / 4) / 100
+        self.matrix_V[2] = 3 * ((((self.eer[9] - self.eer[4]) / 5) - ((self.eer[4] - self.eer[1]) / 3)) / 8) / 100
 
         inv_matrix_u = np.linalg.inv(self.matrix_U)
-
         self.matrix_B = np.dot(inv_matrix_u, self.matrix_V)
 
     def spline_coefficients(self):
+        self.calc_matrices()
+
         b_eer = list(filter(lambda x: x != 0, self.eer))
 
         for i in range(len(self.matrix_n)):
@@ -41,11 +38,23 @@ class InterpolatedYields(FixedBondYields):
             self.matrix_n[i][3] = b_eer[i] / 100
 
     def calc_all_yields(self):
-        pass
+        self.spline_coefficients()
 
+        for i, j in enumerate(FixedBondYields.calc_fixed_yields()):
+            if j == 0:
+                if i <= 4:
+                    self.eer[i] = (self.matrix_n[1][0] * ((i + 1) - 2) ** 3 +
+                                   self.matrix_n[1][1] * ((i + 1) - 2) ** 2 +
+                                   self.matrix_n[1][2] * ((i + 1) - 2) ** 1 +
+                                   self.matrix_n[1][3]) * 100
+                else:
+                    self.eer[i] = (self.matrix_n[2][0] * ((i + 1) - 5) ** 3 +
+                                   self.matrix_n[2][1] * ((i + 1) - 5) ** 2 +
+                                   self.matrix_n[2][2] * ((i + 1) - 5) ** 1 +
+                                   self.matrix_n[2][3]) * 100
+
+        return self.eer
 
 foo = InterpolatedYields()
 foo.calc_matrices()
-foo.spline_coefficients()
-foo.calc_all_yields()
 
