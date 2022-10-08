@@ -15,6 +15,7 @@ class InterpolatedYields(FixedBondYields):
         self.matrix_n = np.zeros((3, 4))
         self.matrix_B = None
         self.eer = FixedBondYields.calc_fixed_yields()
+        self.step_up = [0 for i in range(10)]
 
     def calc_matrices(self):
         self.matrix_V[1] = 3 * ((((self.eer[4] - self.eer[1]) / 3) - (self.eer[1] - self.eer[0])) / 4) / 100
@@ -41,16 +42,60 @@ class InterpolatedYields(FixedBondYields):
         self.spline_coefficients()
 
         for i, j in enumerate(FixedBondYields.calc_fixed_yields()):
-            if j == 0:
+            if i >= 2:
                 if i <= 4:
                     self.eer[i] = (self.matrix_n[1][0] * ((i + 1) - 2) ** 3 +
                                    self.matrix_n[1][1] * ((i + 1) - 2) ** 2 +
                                    self.matrix_n[1][2] * ((i + 1) - 2) ** 1 +
-                                   self.matrix_n[1][3]) * 100
+                                   self.matrix_n[1][3])
                 else:
                     self.eer[i] = (self.matrix_n[2][0] * ((i + 1) - 5) ** 3 +
                                    self.matrix_n[2][1] * ((i + 1) - 5) ** 2 +
                                    self.matrix_n[2][2] * ((i + 1) - 5) ** 1 +
-                                   self.matrix_n[2][3]) * 100
+                                   self.matrix_n[2][3])
+            else:
+                self.eer[i] /= 100
 
         return self.eer
+
+    def step_up_rates(self):
+        def recursion_time(step_up, yikes, n):  # This proves equation c!
+            if (not step_up) or (not yikes):
+                return 0
+            else:
+                if n == 10:
+                    return ((1 + step_up[-1]) / (1 + yikes[-1]) ** n) + recursion_time(step_up[:-1], yikes[:-1], n - 1)
+                else:
+                    return ((step_up[-1]) / (1 + yikes[-1]) ** n) + recursion_time(step_up[:-1], yikes[:-1], n - 1)
+
+        foo = self.calc_all_yields()
+
+        # Manual mathematical jargon to calculate C, this is necessary but, I will need to optimize this in code.
+        self.step_up[0] = foo[0]
+        self.step_up[1] = ((1 - (foo[0] / (1 + foo[0]) ** 1)) * ((1 + foo[1]) ** 2)) - 1
+        self.step_up[2] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2)) * ((1 + foo[2]) ** 3)) - 1
+        self.step_up[3] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
+                           (foo[2] / (1 + foo[2]) ** 3)) * ((1 + foo[3]) ** 4)) - 1
+        self.step_up[4] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
+                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4)) * ((1 + foo[4]) ** 5)) - 1
+        self.step_up[5] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
+                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5)) *
+                           ((1 + foo[5]) ** 6)) - 1
+        self.step_up[6] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
+                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5) -
+                           (foo[5] / (1 + foo[5]) ** 6)) * ((1 + foo[6]) ** 7)) - 1
+        self.step_up[7] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
+                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5) -
+                           (foo[5] / (1 + foo[5]) ** 6) - (foo[6] / (1 + foo[6]) ** 7)) * ((1 + foo[7]) ** 8)) - 1
+        self.step_up[8] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
+                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5) -
+                           (foo[5] / (1 + foo[5]) ** 6) - (foo[6] / (1 + foo[6]) ** 7) - (foo[7] / (1 + foo[7]) ** 8)) *
+                           ((1 + foo[8]) ** 9)) - 1
+        self.step_up[9] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
+                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5) -
+                           (foo[5] / (1 + foo[5]) ** 6) - (foo[6] / (1 + foo[6]) ** 7) - (foo[7] / (1 + foo[7]) ** 8) -
+                           (foo[8] / (1 + foo[8]) ** 9)) * ((1 + foo[9]) ** 10)) - 1
+
+        print(self.step_up)
+        print(foo)
+        return recursion_time(self.step_up, foo, len(foo))
