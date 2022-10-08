@@ -54,7 +54,3 @@ class InterpolatedYields(FixedBondYields):
                                    self.matrix_n[2][3]) * 100
 
         return self.eer
-
-foo = InterpolatedYields()
-foo.calc_matrices()
-
