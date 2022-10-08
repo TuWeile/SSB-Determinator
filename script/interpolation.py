@@ -15,7 +15,10 @@ class InterpolatedYields(FixedBondYields):
         self.matrix_n = np.zeros((3, 4))
         self.matrix_B = None
         self.eer = FixedBondYields.calc_fixed_yields()
-        self.step_up = [0 for i in range(10)]
+
+        self.c_value = [0 for i in range(10)]
+        self.a_value = [0 for i in range(10)]
+        self.e_value = [0 for i in range(10)]
 
     def calc_matrices(self):
         self.matrix_V[1] = 3 * ((((self.eer[4] - self.eer[1]) / 3) - (self.eer[1] - self.eer[0])) / 4) / 100
@@ -68,34 +71,56 @@ class InterpolatedYields(FixedBondYields):
                 else:
                     return ((step_up[-1]) / (1 + yikes[-1]) ** n) + recursion_time(step_up[:-1], yikes[:-1], n - 1)
 
-        foo = self.calc_all_yields()
+        var = self.calc_all_yields()
 
         # Manual mathematical jargon to calculate C, this is necessary but, I will need to optimize this in code.
-        self.step_up[0] = foo[0]
-        self.step_up[1] = ((1 - (foo[0] / (1 + foo[0]) ** 1)) * ((1 + foo[1]) ** 2)) - 1
-        self.step_up[2] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2)) * ((1 + foo[2]) ** 3)) - 1
-        self.step_up[3] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
-                           (foo[2] / (1 + foo[2]) ** 3)) * ((1 + foo[3]) ** 4)) - 1
-        self.step_up[4] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
-                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4)) * ((1 + foo[4]) ** 5)) - 1
-        self.step_up[5] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
-                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5)) *
-                           ((1 + foo[5]) ** 6)) - 1
-        self.step_up[6] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
-                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5) -
-                           (foo[5] / (1 + foo[5]) ** 6)) * ((1 + foo[6]) ** 7)) - 1
-        self.step_up[7] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
-                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5) -
-                           (foo[5] / (1 + foo[5]) ** 6) - (foo[6] / (1 + foo[6]) ** 7)) * ((1 + foo[7]) ** 8)) - 1
-        self.step_up[8] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
-                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5) -
-                           (foo[5] / (1 + foo[5]) ** 6) - (foo[6] / (1 + foo[6]) ** 7) - (foo[7] / (1 + foo[7]) ** 8)) *
-                           ((1 + foo[8]) ** 9)) - 1
-        self.step_up[9] = ((1 - (foo[0] / (1 + foo[0]) ** 1) - (foo[1] / (1 + foo[1]) ** 2) -
-                           (foo[2] / (1 + foo[2]) ** 3) - (foo[3] / (1 + foo[3]) ** 4) - (foo[4] / (1 + foo[4]) ** 5) -
-                           (foo[5] / (1 + foo[5]) ** 6) - (foo[6] / (1 + foo[6]) ** 7) - (foo[7] / (1 + foo[7]) ** 8) -
-                           (foo[8] / (1 + foo[8]) ** 9)) * ((1 + foo[9]) ** 10)) - 1
+        self.c_value[0] = var[0]
+        self.c_value[1] = ((1 - (var[0] / (1 + var[0]) ** 1)) * ((1 + var[1]) ** 2)) - 1
+        self.c_value[2] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2)) * ((1 + var[2]) ** 3)) - 1
+        self.c_value[3] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
+                            (var[2] / (1 + var[2]) ** 3)) * ((1 + var[3]) ** 4)) - 1
+        self.c_value[4] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
+                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4)) * ((1 + var[4]) ** 5)) - 1
+        self.c_value[5] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
+                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5)) *
+                           ((1 + var[5]) ** 6)) - 1
+        self.c_value[6] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
+                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5) -
+                            (var[5] / (1 + var[5]) ** 6)) * ((1 + var[6]) ** 7)) - 1
+        self.c_value[7] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
+                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5) -
+                            (var[5] / (1 + var[5]) ** 6) - (var[6] / (1 + var[6]) ** 7)) * ((1 + var[7]) ** 8)) - 1
+        self.c_value[8] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
+                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5) -
+                            (var[5] / (1 + var[5]) ** 6) - (var[6] / (1 + var[6]) ** 7) - (var[7] / (1 + var[7]) ** 8)) *
+                           ((1 + var[8]) ** 9)) - 1
+        self.c_value[9] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
+                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5) -
+                            (var[5] / (1 + var[5]) ** 6) - (var[6] / (1 + var[6]) ** 7) - (var[7] / (1 + var[7]) ** 8) -
+                            (var[8] / (1 + var[8]) ** 9)) * ((1 + var[9]) ** 10)) - 1
 
-        print(self.step_up)
-        print(foo)
-        return recursion_time(self.step_up, foo, len(foo))
+    def adjustments(self):
+        self.step_up_rates()
+        var = self.calc_all_yields() # To destroy
+
+        for i, j in enumerate(self.a_value):
+            if i == 0:
+                self.a_value[i] = self.c_value[i]
+            else:
+                self.a_value[i] = self.c_value[i] - self.c_value[i - 1]
+
+        r_value = [0 for i in range(10)]
+        t_value = [0 for i in range(10)]
+
+        for i in range(10):
+            r_value[i] = (1 + var[i]) ** (i + 1)
+
+            t_value[i] = sum(self.a_value[0: i + 1]) / r_value[i]  # Issue
+
+        for i in range(9):
+            self.e_value[i] = 1 - (1 / r_value[i]) - sum(t_value[0: i + 1])
+
+        print(t_value)
+        print(self.e_value)
+
+        #return recursion_time(self.c_value, foo, len(foo))
