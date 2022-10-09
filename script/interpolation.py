@@ -19,6 +19,7 @@ class InterpolatedYields(FixedBondYields):
         self.c_value = [0 for i in range(10)]
         self.a_value = [0 for i in range(10)]
         self.e_value = [0 for i in range(10)]
+        self.var = [0 for i in range(10)]
 
     def calc_matrices(self):
         self.matrix_V[1] = 3 * ((((self.eer[4] - self.eer[1]) / 3) - (self.eer[1] - self.eer[0])) / 4) / 100
@@ -71,37 +72,42 @@ class InterpolatedYields(FixedBondYields):
                 else:
                     return ((step_up[-1]) / (1 + yikes[-1]) ** n) + recursion_time(step_up[:-1], yikes[:-1], n - 1)
 
-        var = self.calc_all_yields()
+        self.var = self.calc_all_yields()
 
         # Manual mathematical jargon to calculate C, this is necessary but, I will need to optimize this in code.
-        self.c_value[0] = var[0]
-        self.c_value[1] = ((1 - (var[0] / (1 + var[0]) ** 1)) * ((1 + var[1]) ** 2)) - 1
-        self.c_value[2] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2)) * ((1 + var[2]) ** 3)) - 1
-        self.c_value[3] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
-                            (var[2] / (1 + var[2]) ** 3)) * ((1 + var[3]) ** 4)) - 1
-        self.c_value[4] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
-                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4)) * ((1 + var[4]) ** 5)) - 1
-        self.c_value[5] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
-                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5)) *
-                           ((1 + var[5]) ** 6)) - 1
-        self.c_value[6] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
-                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5) -
-                            (var[5] / (1 + var[5]) ** 6)) * ((1 + var[6]) ** 7)) - 1
-        self.c_value[7] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
-                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5) -
-                            (var[5] / (1 + var[5]) ** 6) - (var[6] / (1 + var[6]) ** 7)) * ((1 + var[7]) ** 8)) - 1
-        self.c_value[8] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
-                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5) -
-                            (var[5] / (1 + var[5]) ** 6) - (var[6] / (1 + var[6]) ** 7) - (var[7] / (1 + var[7]) ** 8)) *
-                           ((1 + var[8]) ** 9)) - 1
-        self.c_value[9] = ((1 - (var[0] / (1 + var[0]) ** 1) - (var[1] / (1 + var[1]) ** 2) -
-                            (var[2] / (1 + var[2]) ** 3) - (var[3] / (1 + var[3]) ** 4) - (var[4] / (1 + var[4]) ** 5) -
-                            (var[5] / (1 + var[5]) ** 6) - (var[6] / (1 + var[6]) ** 7) - (var[7] / (1 + var[7]) ** 8) -
-                            (var[8] / (1 + var[8]) ** 9)) * ((1 + var[9]) ** 10)) - 1
+        self.c_value[0] = self.var[0]
+        self.c_value[1] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1)) * ((1 + self.var[1]) ** 2)) - 1
+        self.c_value[2] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2)) *
+                           ((1 + self.var[2]) ** 3)) - 1
+        self.c_value[3] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
+                            (self.var[2] / (1 + self.var[2]) ** 3)) * ((1 + self.var[3]) ** 4)) - 1
+        self.c_value[4] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
+                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4)) *
+                           ((1 + self.var[4]) ** 5)) - 1
+        self.c_value[5] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
+                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
+                            (self.var[4] / (1 + self.var[4]) ** 5)) * ((1 + self.var[5]) ** 6)) - 1
+        self.c_value[6] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
+                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
+                            (self.var[4] / (1 + self.var[4]) ** 5) - (self.var[5] / (1 + self.var[5]) ** 6)) *
+                           ((1 + self.var[6]) ** 7)) - 1
+        self.c_value[7] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
+                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
+                            (self.var[4] / (1 + self.var[4]) ** 5) - (self.var[5] / (1 + self.var[5]) ** 6) -
+                            (self.var[6] / (1 + self.var[6]) ** 7)) * ((1 + self.var[7]) ** 8)) - 1
+        self.c_value[8] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
+                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
+                            (self.var[4] / (1 + self.var[4]) ** 5) - (self.var[5] / (1 + self.var[5]) ** 6) -
+                            (self.var[6] / (1 + self.var[6]) ** 7) - (self.var[7] / (1 + self.var[7]) ** 8)) *
+                           ((1 + self.var[8]) ** 9)) - 1
+        self.c_value[9] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
+                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
+                            (self.var[4] / (1 + self.var[4]) ** 5) - (self.var[5] / (1 + self.var[5]) ** 6) -
+                            (self.var[6] / (1 + self.var[6]) ** 7) - (self.var[7] / (1 + self.var[7]) ** 8) -
+                            (self.var[8] / (1 + self.var[8]) ** 9)) * ((1 + self.var[9]) ** 10)) - 1
 
     def adjustments(self):
         self.step_up_rates()
-        var = self.calc_all_yields() # To destroy
 
         for i, j in enumerate(self.a_value):
             if i == 0:
@@ -112,15 +118,18 @@ class InterpolatedYields(FixedBondYields):
         r_value = [0 for i in range(10)]
         t_value = [0 for i in range(10)]
 
+        print(self.var)
+
         for i in range(10):
-            r_value[i] = (1 + var[i]) ** (i + 1)
+            r_value[i] = (1 + self.var[i]) ** (i + 1)
 
             t_value[i] = sum(self.a_value[0: i + 1]) / r_value[i]  # Issue
 
         for i in range(9):
             self.e_value[i] = 1 - (1 / r_value[i]) - sum(t_value[0: i + 1])
 
-        print(t_value)
-        print(self.e_value)
+        self.e_value = [self.e_value[i] ** 2 for i in range(10)]
 
-        #return recursion_time(self.c_value, foo, len(foo))
+        print(self.e_value)
+        print(self.eer)
+
