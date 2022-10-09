@@ -63,14 +63,14 @@ class InterpolatedYields(FixedBondYields):
         return self.eer
 
     def step_up_rates(self):
-        def recursion_time(step_up, yikes, n):  # This proves equation c!
-            if (not step_up) or (not yikes):
+        def recursion_time(c_value, eer, n):  # This proves equation c!
+            if (not c_value) or (not eer):
                 return 0
             else:
                 if n == 10:
-                    return ((1 + step_up[-1]) / (1 + yikes[-1]) ** n) + recursion_time(step_up[:-1], yikes[:-1], n - 1)
+                    return ((1 + c_value[-1]) / (1 + eer[-1]) ** n) + recursion_time(c_value[:-1], eer[:-1], n - 1)
                 else:
-                    return ((step_up[-1]) / (1 + yikes[-1]) ** n) + recursion_time(step_up[:-1], yikes[:-1], n - 1)
+                    return ((c_value[-1]) / (1 + eer[-1]) ** n) + recursion_time(c_value[:-1], eer[:-1], n - 1)
 
         self.var = self.calc_all_yields()
 
@@ -106,30 +106,19 @@ class InterpolatedYields(FixedBondYields):
                             (self.var[6] / (1 + self.var[6]) ** 7) - (self.var[7] / (1 + self.var[7]) ** 8) -
                             (self.var[8] / (1 + self.var[8]) ** 9)) * ((1 + self.var[9]) ** 10)) - 1
 
-    def adjustments(self):
-        self.step_up_rates()
-
         for i, j in enumerate(self.a_value):
             if i == 0:
                 self.a_value[i] = self.c_value[i]
             else:
                 self.a_value[i] = self.c_value[i] - self.c_value[i - 1]
 
-        r_value = [0 for i in range(10)]
-        t_value = [0 for i in range(10)]
-
-        print(self.var)
-
-        for i in range(10):
-            r_value[i] = (1 + self.var[i]) ** (i + 1)
-
-            t_value[i] = sum(self.a_value[0: i + 1]) / r_value[i]  # Issue
+        r_value = [(1 + self.var[i]) ** (i + 1) for i in range(10)]
+        t_value = [sum(self.a_value[0: i + 1]) / r_value[i] for i in range(10)]  # Issue
 
         for i in range(9):
-            self.e_value[i] = 1 - (1 / r_value[i]) - sum(t_value[0: i + 1])
+            self.e_value[i] = 1 - (1 / r_value[i]) - sum(t_value[0: i + 1])  # [0: i + 1]
 
         self.e_value = [self.e_value[i] ** 2 for i in range(10)]
 
-        print(self.e_value)
-        print(self.eer)
+        return recursion_time(self.c_value, self.eer, 10)
 
