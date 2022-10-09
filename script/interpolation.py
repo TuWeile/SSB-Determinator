@@ -112,6 +112,8 @@ class InterpolatedYields(FixedBondYields):
             else:
                 self.a_value[i] = self.c_value[i] - self.c_value[i - 1]
 
+        self.a_value = [0 if i < 0 else i for i in self.a_value]
+
         r_value = [(1 + self.var[i]) ** (i + 1) for i in range(10)]
         t_value = [sum(self.a_value[0: i + 1]) / r_value[i] for i in range(10)]  # Issue
 
@@ -120,5 +122,4 @@ class InterpolatedYields(FixedBondYields):
 
         self.e_value = [self.e_value[i] ** 2 for i in range(10)]
 
-        return recursion_time(self.c_value, self.eer, 10)
-
+        ans = [sum(self.e_value[i:]) for i in range(10)]
