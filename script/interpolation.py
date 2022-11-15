@@ -1,6 +1,7 @@
 from fixed_yields import *
 import numpy as np
-
+import matplotlib.pyplot as plt
+from scipy.interpolate import UnivariateSpline
 
 class InterpolatedYields(FixedBondYields):
 
@@ -19,7 +20,8 @@ class InterpolatedYields(FixedBondYields):
         self.c_value = [0 for i in range(10)]
         self.a_value = [0 for i in range(10)]
         self.e_value = [0 for i in range(10)]
-        self.var = [0 for i in range(10)]
+        self.d_value = [0 for i in range(10)]
+        # self.var = [0 for i in range(10)]
 
     def calc_matrices(self):
         self.matrix_V[1] = 3 * ((((self.eer[4] - self.eer[1]) / 3) - (self.eer[1] - self.eer[0])) / 4) / 100
@@ -72,54 +74,14 @@ class InterpolatedYields(FixedBondYields):
                 else:
                     return ((c_value[-1]) / (1 + eer[-1]) ** n) + recursion_time(c_value[:-1], eer[:-1], n - 1)
 
-        self.var = self.calc_all_yields()
+        self.calc_all_yields()
 
-        # Manual mathematical jargon to calculate C, this is necessary but, I will need to optimize this in code.
-        self.c_value[0] = self.var[0]
-        self.c_value[1] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1)) * ((1 + self.var[1]) ** 2)) - 1
-        self.c_value[2] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2)) *
-                           ((1 + self.var[2]) ** 3)) - 1
-        self.c_value[3] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
-                            (self.var[2] / (1 + self.var[2]) ** 3)) * ((1 + self.var[3]) ** 4)) - 1
-        self.c_value[4] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
-                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4)) *
-                           ((1 + self.var[4]) ** 5)) - 1
-        self.c_value[5] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
-                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
-                            (self.var[4] / (1 + self.var[4]) ** 5)) * ((1 + self.var[5]) ** 6)) - 1
-        self.c_value[6] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
-                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
-                            (self.var[4] / (1 + self.var[4]) ** 5) - (self.var[5] / (1 + self.var[5]) ** 6)) *
-                           ((1 + self.var[6]) ** 7)) - 1
-        self.c_value[7] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
-                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
-                            (self.var[4] / (1 + self.var[4]) ** 5) - (self.var[5] / (1 + self.var[5]) ** 6) -
-                            (self.var[6] / (1 + self.var[6]) ** 7)) * ((1 + self.var[7]) ** 8)) - 1
-        self.c_value[8] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
-                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
-                            (self.var[4] / (1 + self.var[4]) ** 5) - (self.var[5] / (1 + self.var[5]) ** 6) -
-                            (self.var[6] / (1 + self.var[6]) ** 7) - (self.var[7] / (1 + self.var[7]) ** 8)) *
-                           ((1 + self.var[8]) ** 9)) - 1
-        self.c_value[9] = ((1 - (self.var[0] / (1 + self.var[0]) ** 1) - (self.var[1] / (1 + self.var[1]) ** 2) -
-                            (self.var[2] / (1 + self.var[2]) ** 3) - (self.var[3] / (1 + self.var[3]) ** 4) -
-                            (self.var[4] / (1 + self.var[4]) ** 5) - (self.var[5] / (1 + self.var[5]) ** 6) -
-                            (self.var[6] / (1 + self.var[6]) ** 7) - (self.var[7] / (1 + self.var[7]) ** 8) -
-                            (self.var[8] / (1 + self.var[8]) ** 9)) * ((1 + self.var[9]) ** 10)) - 1
+        x = np.array(self.eer[::-1])
 
-        for i, j in enumerate(self.a_value):
-            if i == 0:
-                self.a_value[i] = self.c_value[i]
-            else:
-                self.a_value[i] = self.c_value[i] - self.c_value[i - 1]
-
-        self.a_value = [0 if i < 0 else i for i in self.a_value]
-
-        r_value = [(1 + self.var[i]) ** (i + 1) for i in range(10)]
-        t_value = [sum(self.a_value[0: i + 1]) / r_value[i] for i in range(10)]  # Issue
-
-        for i in range(9):
-            self.e_value[i] = 1 - (1 / r_value[i]) - sum(t_value[0: i + 1])  # [0: i + 1]
-
-        self.e_value = [self.e_value[i] ** 2 for i in range(10)]
-
-        ans = [sum(self.e_value[i:]) for i in range(10)]
+        return np.minimum.accumulate(x)[::-1]  # Not good enough. Will need to make amends.
+        # TODO: Need to model for adjustments to coupon rates to maintain step-up features.
+        # Mathematical jargon and calculations are too complex, with alpha and c-value in section 4.5 often coming
+        # into mathematical contradictions with one another. Although the SGS rates passes equation 4.3(c), but
+        # recent articles mention that this equation can be violated (less than 1) where necessary.
+        #
+        # https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=7615&context=lkcsb_research
