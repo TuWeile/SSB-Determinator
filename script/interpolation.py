@@ -83,14 +83,10 @@ class InterpolatedYields(FixedBondYields):
         for i, j in enumerate(self.eer):
             if i == 0:
                 self.d_value[i] = 1 / (1 + self.eer[i])
-                self.spot_rates[i] = self.eer[i] - 1
+                self.spot_rates[i] = self.eer[i]
             else:
                 self.d_value[i] = ((1 - (self.eer[i] * (sum(self.d_value[:i])))) / (1 + self.eer[i]))
-                if i == 9:
-                    self.spot_rates[i] = ((1 + self.eer[i] / (1 - recursion_spot_rate(i, i))) ** (1 / i)) - 1
-                else:
-                    self.spot_rates[i] = ((self.eer[i] / (1 - recursion_spot_rate(i, i))) ** (1 / i)) - 1
-
+                self.spot_rates[i] = (self.eer[i] * (i + 1)) - sum(self.spot_rates)
 
         print(self.eer)
         print(self.spot_rates)
