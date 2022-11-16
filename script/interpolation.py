@@ -1,7 +1,6 @@
 from fixed_yields import *
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.interpolate import UnivariateSpline
+
 
 class InterpolatedYields(FixedBondYields):
 
@@ -17,11 +16,10 @@ class InterpolatedYields(FixedBondYields):
         self.matrix_B = None
         self.eer = FixedBondYields.calc_fixed_yields()
 
-        self.c_value = [0 for i in range(10)]
+        self.d_value = [0 for i in range(10)]
+        self.spot_rates = [0 for i in range(10)]
         self.a_value = [0 for i in range(10)]
         self.e_value = [0 for i in range(10)]
-        self.d_value = [0 for i in range(10)]
-        # self.var = [0 for i in range(10)]
 
     def calc_matrices(self):
         self.matrix_V[1] = 3 * ((((self.eer[4] - self.eer[1]) / 3) - (self.eer[1] - self.eer[0])) / 4) / 100
@@ -74,14 +72,25 @@ class InterpolatedYields(FixedBondYields):
                 else:
                     return ((c_value[-1]) / (1 + eer[-1]) ** n) + recursion_time(c_value[:-1], eer[:-1], n - 1)
 
+        def recursion_spot_rate(key, foo):
+            if key == 0:
+                return self.eer[foo] / (1 + self.spot_rates[key])
+            else:
+                return (self.eer[foo] / ((1 + self.spot_rates[key]) ** (key + 1))) + recursion_spot_rate(key - 1, foo)
+
         self.calc_all_yields()
 
-        x = np.array(self.eer[::-1])
+        for i, j in enumerate(self.eer):
+            if i == 0:
+                self.d_value[i] = 1 / (1 + self.eer[i])
+                self.spot_rates[i] = self.eer[i] - 1
+            else:
+                self.d_value[i] = ((1 - (self.eer[i] * (sum(self.d_value[:i])))) / (1 + self.eer[i]))
+                if i == 9:
+                    self.spot_rates[i] = ((1 + self.eer[i] / (1 - recursion_spot_rate(i, i))) ** (1 / i)) - 1
+                else:
+                    self.spot_rates[i] = ((self.eer[i] / (1 - recursion_spot_rate(i, i))) ** (1 / i)) - 1
 
-        return np.minimum.accumulate(x)[::-1]  # Not good enough. Will need to make amends.
-        # TODO: Need to model for adjustments to coupon rates to maintain step-up features.
-        # Mathematical jargon and calculations are too complex, with alpha and c-value in section 4.5 often coming
-        # into mathematical contradictions with one another. Although the SGS rates passes equation 4.3(c), but
-        # recent articles mention that this equation can be violated (less than 1) where necessary.
-        #
-        # https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=7615&context=lkcsb_research
+
+        print(self.eer)
+        print(self.spot_rates)
