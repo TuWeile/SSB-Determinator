@@ -18,6 +18,7 @@ class InterpolatedYields(FixedBondYields):
 
         self.d_value = [0 for i in range(10)]
         self.spot_rates = [0 for i in range(10)]
+        self.c_value = [0 for i in range(10)]
         self.a_value = [0 for i in range(10)]
         self.e_value = [0 for i in range(10)]
 
@@ -63,20 +64,11 @@ class InterpolatedYields(FixedBondYields):
         return self.eer
 
     def step_up_rates(self):
-        def recursion_time(c_value, eer, n):  # This proves equation c!
-            if (not c_value) or (not eer):
-                return 0
+        def recursion_spot_rate(x, y):
+            if x == 0:
+                return self.eer[y] / (1 + self.spot_rates[x])
             else:
-                if n == 10:
-                    return ((1 + c_value[-1]) / (1 + eer[-1]) ** n) + recursion_time(c_value[:-1], eer[:-1], n - 1)
-                else:
-                    return ((c_value[-1]) / (1 + eer[-1]) ** n) + recursion_time(c_value[:-1], eer[:-1], n - 1)
-
-        def recursion_spot_rate(key, foo):
-            if key == 0:
-                return self.eer[foo] / (1 + self.spot_rates[key])
-            else:
-                return (self.eer[foo] / ((1 + self.spot_rates[key]) ** (key + 1))) + recursion_spot_rate(key - 1, foo)
+                return (self.eer[y] / ((1 + self.spot_rates[x]) ** (x + 1))) + recursion_spot_rate(x - 1, y)
 
         self.calc_all_yields()
 
@@ -88,5 +80,44 @@ class InterpolatedYields(FixedBondYields):
                 self.d_value[i] = ((1 - (self.eer[i] * (sum(self.d_value[:i])))) / (1 + self.eer[i]))
                 self.spot_rates[i] = (self.eer[i] * (i + 1)) - sum(self.spot_rates)
 
-        print(self.eer)
-        print(self.spot_rates)
+        def recursion_c_value(x):
+            if x == 0:
+                return self.c_value[x] * self.d_value[x]
+            else:
+                return (self.c_value[x] * self.d_value[x]) + recursion_c_value(x - 1)
+
+        for i in range(len(self.c_value)):
+            self.c_value[i] = ((1 - recursion_c_value(i)) / self.d_value[i]) - 1
+
+            if i == 0:
+                self.c_value[i] = (1 / self.d_value[i]) - 1
+                self.a_value[i] = self.c_value[i]
+            else:
+                self.a_value[i] = self.c_value[i] - self.c_value[i - 1]
+                if self.a_value[i] < 0:
+                    self.a_value[i] = 0
+
+        """
+        These equation below only exists as proof from equation 4.3(c) and equation 4.5
+
+        def recursion_proof(x):
+            if x == 0:
+                return self.c_value[x] / (1 + self.spot_rates[x])
+            elif x == 9:
+                return ((1 + self.c_value[x]) / ((1 + self.spot_rates[x]) ** (x + 1))) + recursion_proof(x - 1)
+            else:
+                return (self.c_value[x] / ((1 + self.spot_rates[x]) ** (x + 1))) + recursion_proof(x - 1)
+
+        def recursion_e_value(x):
+            if x == 0:
+                return self.a_value[x] / ((1 + self.spot_rates[x]) ** (x + 1))
+            else:
+                return (sum(self.a_value[:x + 1]) / ((1 + self.spot_rates[x]) ** (x + 1))) + recursion_e_value(x - 1)
+
+        for i in range(10):
+            self.e_value[i] = 1 - (1 / ((1 + self.spot_rates[i]) ** (i + 1))) - (recursion_e_value(i))
+            if i == 9:
+                self.e_value[i] = 0
+
+        self.e_value = [(i ** 2) for i in self.e_value]
+        """
