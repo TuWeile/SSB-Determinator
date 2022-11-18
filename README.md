@@ -22,7 +22,6 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
 
@@ -157,6 +156,10 @@ research as multiple parameters will need to be considered for such an evaluatio
 Furthermore, when running this repository, please keep into consideration of the [CME FedWatch Tool][CME-Tool] as the SGS Bond
 Yields closely follows the U.S. Fed interest rates and can serve as an important guidance in forecasting future bond yields.
 
+As for the adjustments within the technical specifications, please do allow for the adjustments of the coupons to differ by
+up to ±0.06%. While this is not within the acceptable range of ±0.03% from the technical specifications, nevertheless I do
+intend to optimize the calculations further to meet with the rounding of the computation of the step-up coupons.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -220,8 +223,6 @@ Project Link: [https://github.com/TuWeile/SSB-Determinator](https://github.com/T
 [stars-url]: https://github.com/TuWeile/SSB-Determinator/stargazers
 [issues-shield]: https://img.shields.io/github/issues/TuWeile/SSB-Determinator.svg?style=for-the-badge
 [issues-url]: https://github.com/TuWeile/SSB-Determinator/issues
-[license-shield]: https://img.shields.io/github/license/TuWeile/SSB-Determinator.svg?style=for-the-badge
-[license-url]: https://github.com/TuWeile/SSB-Determinator/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/tuweile/
 [product-screenshot]: resources/SSB-description.gif
