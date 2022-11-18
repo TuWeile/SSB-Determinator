@@ -64,15 +64,22 @@ class InterpolatedYields(FixedBondYields):
         return self.eer
 
     def step_up_rates(self):
+        self.calc_all_yields()
+        self.eer = [i * 100 for i in self.eer]
+
+        for i, j in enumerate(np.minimum.accumulate(self.eer[::-1])[::-1]):
+            print(f"Average p.a. return (%) for Year {i + 1}: {j:.2f}")
+
+        """
+        These equation below only exists as experimental proof from equation 4.3 and equation 4.5
+        
         def recursion_spot_rate(x, y):
             if x == 0:
                 return self.eer[y] / (1 + self.spot_rates[x])
             else:
                 return (self.eer[y] / ((1 + self.spot_rates[x]) ** (x + 1))) + recursion_spot_rate(x - 1, y)
-
-        self.calc_all_yields()
-
-        for i, j in enumerate(self.eer):
+                
+        for i, j in enumerate(self.eer):  # Equation 4.3(a)
             if i == 0:
                 self.d_value[i] = 1 / (1 + self.eer[i])
                 self.spot_rates[i] = self.eer[i]
@@ -80,7 +87,7 @@ class InterpolatedYields(FixedBondYields):
                 self.d_value[i] = ((1 - (self.eer[i] * (sum(self.d_value[:i])))) / (1 + self.eer[i]))
                 self.spot_rates[i] = (self.eer[i] * (i + 1)) - sum(self.spot_rates)
 
-        def recursion_c_value(x):
+        def recursion_c_value(x):  # Equation 4.3(b)
             if x == 0:
                 return self.c_value[x] * self.d_value[x]
             else:
@@ -97,10 +104,7 @@ class InterpolatedYields(FixedBondYields):
                 if self.a_value[i] < 0:
                     self.a_value[i] = 0
 
-        """
-        These equation below only exists as proof from equation 4.3(c) and equation 4.5
-
-        def recursion_proof(x):
+        def recursion_proof(x):  # Equation 4.3(c)
             if x == 0:
                 return self.c_value[x] / (1 + self.spot_rates[x])
             elif x == 9:
@@ -108,7 +112,7 @@ class InterpolatedYields(FixedBondYields):
             else:
                 return (self.c_value[x] / ((1 + self.spot_rates[x]) ** (x + 1))) + recursion_proof(x - 1)
 
-        def recursion_e_value(x):
+        def recursion_e_value(x):  # Equation 4.5
             if x == 0:
                 return self.a_value[x] / ((1 + self.spot_rates[x]) ** (x + 1))
             else:
