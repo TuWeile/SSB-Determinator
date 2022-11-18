@@ -93,7 +93,7 @@ by the [MAS calculations and technical specifications][MAS-resources] and furthe
 it is hoped that the optimization of the step-up adjustments and the basis application into Python / C++ libraries will
 be able to contribute further into developing future predictions and estimations into the upcoming SSB bond yield model.
 
-Documentation and specific details can be found [here][medium] on Medium.
+Once I have taken the time to complete up the writings, documentation and its specific details can be found [here][medium] on Medium.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -110,32 +110,37 @@ Documentation and specific details can be found [here][medium] on Medium.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+In order to get the project running locally within your computer, follow these prerequisites:
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+* List of Python packages to install
   ```sh
-  npm install npm@latest -g
+  numpy
+  pandas
+  configparser
   ```
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
+1. Determine the <strong>month</strong> of the SSB bond you want to estimate. If you want to estimate for the December 
+SSB bond, you will need to obtain the data for the month of <strong>October</strong> SGS reference yields. This is because
+it takes a month to bid for the SSB (Nov 1 to Nov 25) after collecting the data from October, and it is only issued on the
+first day of the next month after the bidding period is over (Dec 1, hence the term "December SSB bond").
+
+2. Download the data from the [SGS Prices and Yields - Benchmark Issues][MAS-website] here, with the specifications that:
+   ```shell
+   Frequency: Daily
+   
+   Average Buying Rates of Govt Securities Dealers: [1-Year T-Bill Yield, 2-Year Bond Yield, 5-Year Bond Yield, 10-Year Bond Yield]
    ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
+   You may refer to the above gif illustration to download the data as shown above.
+
+3. Clone the repo and place the data you have downloaded in the /data directory. You may find sample data as shown within the
+directory specified. Once completed, configure the `config.ini` file such that the data variable is pointing to the file added.
+
+4. Start up your IDE (PyCharm), and configure the working directory within the configuration to point towards the `/path/to/SSB-Determiantor`
+directory. Once completed, you can run `main.py` to execute the script.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -144,23 +149,13 @@ This is an example of how to list things you need to use the software and how to
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+When using this repository, it is generally advisable to execute the repository on the last working day of the calendar month
+for the best results as the [SGS Prices and Yields - Benchmark Issues][MAS-website] is updated daily. I will eventually consider
+adding in new features to predict and forecast acceptable daily bond yields ahead of time, but at the moment this would require
+research as multiple parameters will need to be considered for such an evaluation.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
-
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+Furthermore, when running this repository, please keep into consideration of the [CME FedWatch Tool][CME-Tool] as the SGS Bond
+Yields closely follows the U.S. Fed interest rates and can serve as an important guidance in forecasting future bond yields.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -187,7 +182,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the BSD 3-Clause "New" License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -196,9 +191,9 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
+Tu Weile - [LinkedIn][linkedin-url] - tuweile.sg@gmail.com
 
-Project Link: [https://github.com/github_username/repo_name](https://github.com/github_username/repo_name)
+Project Link: [https://github.com/TuWeile/SSB-Determinator](https://github.com/TuWeile/SSB-Determinator)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -207,9 +202,9 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* [Monetary Authority of Singapore. (2019). Singapore Savings Bonds: Technical Specifications.][MAS-resources]
+* [Lim, K. G. (2021). Bermudan option in Singapore Savings Bonds. Review of Derivatives Research, 24(1), 31-54.][SMU-resources]
+* [Melvin. (2022). Estimating effective SSB rates from SGS Benchmark Yields. Financial Literacy Singapore.][blog-resources]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -226,7 +221,7 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [issues-shield]: https://img.shields.io/github/issues/TuWeile/SSB-Determinator.svg?style=for-the-badge
 [issues-url]: https://github.com/TuWeile/SSB-Determinator/issues
 [license-shield]: https://img.shields.io/github/license/TuWeile/SSB-Determinator.svg?style=for-the-badge
-[license-url]: https://github.com/TuWeile/SSB-Determinator/blob/master/LICENSE.txt
+[license-url]: https://github.com/TuWeile/SSB-Determinator/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/tuweile/
 [product-screenshot]: resources/SSB-description.gif
@@ -236,3 +231,5 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [SMU-resources]: https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=7615&context=lkcsb_research
 [blog-resources]: https://meltec22.wixsite.com/finlitsg/post/estimating-effective-ssb-rates-from-sgs-benchmark-yields
 [medium]: https://medium.com/@tuweile
+[MAS-website]: https://eservices.mas.gov.sg/statistics/fdanet/BenchmarkPricesAndYields.asp
+[CME-Tool]: https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html
