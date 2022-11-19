@@ -111,7 +111,7 @@ Once I have taken the time to complete up the writings, documentation and its sp
 <!-- GETTING STARTED -->
 ## Getting Started
 
-In order to get the project running locally within your computer, follow these prerequisites:
+In order to get the project running locally within your computer, follow these prerequisites below:
 
 ### Prerequisites
 
