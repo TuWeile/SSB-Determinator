@@ -123,7 +123,6 @@ In order to get the project running locally within your computer, follow these p
 
 ### Installation
 
-<p align='justify'>
 1. Determine the <strong>month</strong> of the SSB bond you want to estimate. If you want to estimate for the December 
 SSB bond, you will need to obtain the data for the month of <strong>October</strong> SGS reference yields. This is because
 it takes a month to bid for the SSB (Nov 1 to Nov 25) after collecting the data from October, and it is only issued on the
@@ -142,7 +141,7 @@ directory specified. Once completed, configure the `config.ini` file such that t
 
 4. Start up your IDE (PyCharm), and configure the working directory within the configuration to point towards the `/path/to/SSB-Determiantor`
 directory. Once completed, you can run `main.py` to execute the script.
-</p>
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -156,10 +155,14 @@ When using this repository, it is generally advisable to execute the repository 
 for the best results as the [SGS Prices and Yields - Benchmark Issues][MAS-website] is updated daily. I will eventually consider
 adding in new features to predict and forecast acceptable daily bond yields ahead of time, but at the moment this would require
 research as multiple parameters will need to be considered for such an evaluation.
+</p>
 
+<p align='justify'>
 Furthermore, when running this repository, please keep into consideration of the [CME FedWatch Tool][CME-Tool] as the SGS Bond
 Yields closely follows the U.S. Fed interest rates and can serve as an important guidance in forecasting future bond yields.
+</p>
 
+<p align="justify">
 As for the adjustments within the technical specifications, please do allow for the adjustments of the coupons to differ by
 up to ±0.06%. While this is not within the acceptable range of ±0.03% from the technical specifications, nevertheless I do
 intend to optimize the calculations further to meet with the rounding of the computation of the step-up coupons.
@@ -173,7 +176,7 @@ intend to optimize the calculations further to meet with the rounding of the com
 ## Contributing
 
 <p align='justify'>
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are <strong>greatly appreciated</strong>.
 
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
@@ -212,11 +215,9 @@ Project Link: [https://github.com/TuWeile/SSB-Determinator](https://github.com/T
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-<p align='justify'>
 * [Monetary Authority of Singapore. (2019). Singapore Savings Bonds: Technical Specifications.][MAS-resources]
 * [Lim, K. G. (2021). Bermudan option in Singapore Savings Bonds. Review of Derivatives Research, 24(1), 31-54.][SMU-resources]
 * [Melvin. (2022). Estimating effective SSB rates from SGS Benchmark Yields. Financial Literacy Singapore.][blog-resources]
-</p>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
