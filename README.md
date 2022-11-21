@@ -233,5 +233,5 @@ Project Link: [https://github.com/TuWeile/SSB-Determinator](https://github.com/T
 [SMU-resources]: https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=7615&context=lkcsb_research
 [blog-resources]: https://meltec22.wixsite.com/finlitsg/post/estimating-effective-ssb-rates-from-sgs-benchmark-yields
 [medium]: https://medium.com/@tuweile
-[MAS-website]: https://eservices.mas.gov.sg/statistics/fdanet/BenchmarkPricesAndYields.asp
+[MAS-website]: https://eservices.mas.gov.sg/statistics/fdanet/BenchmarkPricesAndYields.aspx
 [CME-Tool]: https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html
